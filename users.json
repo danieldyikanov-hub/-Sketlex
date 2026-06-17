@@ -1,0 +1,12 @@
+[
+    {
+        "username": "Sketlex",
+        "password": "$2b$10$bT2soHkHxKs9XncZgpjTl..lLDx02DINaHXRzHvbFkPUmg8TaOmdK",
+        "role": "admin"
+    },
+    {
+        "username": "DiamonD",
+        "password": "$2b$10$tRO4zeJjJ388fMctAuruU.c2hm4DfOR3R8u6k3XRx5ataKGquyUgS",
+        "role": "user"
+    }
+]
