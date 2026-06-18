@@ -170,7 +170,7 @@ app.post("/forgotpassword", async (req, res) => {
 
 console.log(resetLink);
 
-res.send(<!DOCTYPE html>
+res.send(`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
