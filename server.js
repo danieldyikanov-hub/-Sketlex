@@ -131,11 +131,15 @@ app.post(
 
 app.get("/photos", (req, res) => {
 
+    if (!fs.existsSync("public/uploads")) {
+        return res.json([]);
+    }
+
     const files = fs.readdirSync("public/uploads");
 
     res.json(files);
 
-});
+});;
 
 app.use(express.json());
 
@@ -191,12 +195,15 @@ app.post(
 
 app.get("/songs", (req, res) => {
 
+    if (!fs.existsSync("public/songs")) {
+        return res.json([]);
+    }
+
     const files = fs.readdirSync("public/songs");
 
     res.json(files);
 
 });
-
 app.post("/delete-song", (req, res) => {
 
     const fileName = req.body.file;
