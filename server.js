@@ -168,7 +168,12 @@ app.post("/forgotpassword", async (req, res) => {
     const resetLink =
         `https://artist-sketlex.onrender.com/reset-password/${token}`;
 
-await transporter.sendMail({
+console.log("Ссылка восстановления:");
+console.log(resetLink);
+
+res.send(resetLink);
+
+// await transporter.sendMail({
 
     from: "artist-sketlex@gmail.com",
 
