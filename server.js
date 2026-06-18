@@ -134,48 +134,55 @@ app.get("/logout", (req, res) => {
 
 app.post("/forgotpassword", async (req, res) => {
 
-    const email = req.body.email;
+    try {
 
-    const user = users.find(
-        u => u.email === email
-    );
+        const email = req.body.email;
 
-    if (!user) {
-        return res.send("Пользователь не найден");
-    }
+        const user = users.find(
+            u => u.email === email
+        );
 
-    const token = Date.now().toString();
+        if (!user) {
+            return res.send("Пользователь не найден");
+        }
 
-    user.resetToken = token;
+        const token = Date.now().toString();
 
-    fs.writeFileSync(
-        "users.json",
-        JSON.stringify(users, null, 4)
-    );
+        user.resetToken = token;
 
-    const resetLink =
+        fs.writeFileSync(
+            "users.json",
+            JSON.stringify(users, null, 4)
+        );
+
+        const resetLink =
         `https://artist-sketlex.onrender.com/reset-password/${token}`;
 
-await transporter.sendMail({
+        await transporter.sendMail({
 
-    from: "artist-sketlex@gmail.com",
+            from: "victorsketlex@gmail.com",
 
-    to: email,
+            to: email,
 
-    subject: "Восстановление пароля",
+            subject: "Восстановление пароля",
 
-    html: `
-        <h2>Восстановление пароля</h2>
+            html: `
+                <h2>Восстановление пароля</h2>
+                <a href="${resetLink}">
+                    Сменить пароль
+                </a>
+            `
+        });
 
-        <a href="${resetLink}">
-            Сменить пароль
-        </a>
-    `
+        res.send("Письмо отправлено");
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).send("Ошибка отправки письма");
+    }
 });
-
-    res.send ("Письмо отправлено");
-});
-
 app.get("/resetpassword/:token", (req, res) => {
 
     res.sendFile(
