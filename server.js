@@ -201,7 +201,7 @@ app.get("/resetpassword/:token", (req, res) => {
 
 });
 
-app.post("/reset-password", async (req, res) => {
+app.post("/resetpassword", async (req, res) => {
 
     const token =
     req.body.token;
