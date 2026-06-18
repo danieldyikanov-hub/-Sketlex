@@ -303,6 +303,10 @@ app.post(
     songUpload.single("song"),
     (req, res) => {
 
+        if (!req.file) {
+            return res.send("Файл не выбран");
+        }
+
         console.log("Файл:", req.file);
 
         res.send("Песня загружена!");
