@@ -273,9 +273,9 @@ p {
 
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 50vh;
 }
 
 .logout-link {
@@ -291,4 +291,34 @@ p {
     font-size: 20px;
 
     cursor: pointer;
+}
+
+input {
+    width: 300px;
+    padding: 12px;
+
+    border-radius: 10px;
+    border: none;
+
+    font-size: 18px;
+    font-family: Montserrat;
+}
+
+button {
+    padding: 12px 25px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: white;
+    color: black;
+
+    font-size: 18px;
+    font-family: Montserrat;
+
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
 }

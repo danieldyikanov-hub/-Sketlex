@@ -170,11 +170,28 @@ app.post("/forgotpassword", async (req, res) => {
 
 console.log(resetLink);
 
-res.send(`
-    <h2>Тест восстановления пароля</h2>
-    <a href="${resetLink}">
-        Сменить пароль
-    </a>
+res.send(<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/style.css">
+<title>Восстановление пароля</title>
+</head>
+
+<body>
+
+<div class="login-container">
+
+<h2>Восстановление пароля</h2>
+
+<a href="${resetLink}">
+Сменить пароль
+</a>
+
+</div>
+
+</body>
+</html>
 `);
 });
 
