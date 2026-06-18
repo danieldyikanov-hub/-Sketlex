@@ -92,6 +92,13 @@ fs.writeFileSync(
 );
 
     res.redirect("/");
+
+users.push({
+    username: username,
+    email: email,
+    password: hashedPassword,
+    role: "user"
+
 });
 
 app.get("/admin", (req, res) => {
