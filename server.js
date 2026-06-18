@@ -179,7 +179,7 @@ await transporter.sendMail({
 app.get("/resetpassword/:token", (req, res) => {
 
     res.sendFile(
-        path.join(__dirname, "public", "reserpassword.html")
+        path.join(__dirname, "public", "resetpassword.html")
     );
 
 });
