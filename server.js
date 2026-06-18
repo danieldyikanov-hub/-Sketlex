@@ -330,6 +330,12 @@ app.get("/songs", (req, res) => {
 });
 app.post("/delete-song", (req, res) => {
 
+    if (
+        !req.session.user ||
+        req.session.user.role !== "admin"
+    ) {
+        return res.status(403).send("Нет доступа");
+
     const fileName = req.body.file;
 
     const filePath = path.join(__dirname, "public/songs", fileName);

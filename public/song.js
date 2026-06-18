@@ -28,6 +28,14 @@ deleteBtn.innerText ="🗑";
 
 deleteBtn.onclick = () => {
 
+    const confirmed = confirm(
+        "Вы уверены, что хотите удалить эту песню?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
     fetch("/delete-song", {
         method: "POST",
         headers: {
