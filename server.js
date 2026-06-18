@@ -10,6 +10,8 @@ const express = require("express");
 
 const path = require("path");
 
+const nodemailer = require("nodemailer");
+
 const storage = multer.diskStorage({
 
     destination: (req, file, cb) => {
@@ -20,6 +22,14 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "-" + file.originalname);
     }
 
+});
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "victorsketlex@gmail.com",
+        pass: "phhk enzp weje dpot"
+    }
 });
 
 const upload = multer({ storage });
@@ -79,10 +89,13 @@ app.post("/register", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
+    const email = req.body.email;
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     users.push({
         username: username,
+        email: email,
         password: hashedPassword,
         role: "user"
     });
@@ -92,13 +105,6 @@ fs.writeFileSync(
 );
 
     res.redirect("/");
-
-users.push({
-    username: username,
-    email: email,
-    password: hashedPassword,
-    role: "user"
-
 });
 
 app.get("/admin", (req, res) => {
@@ -124,6 +130,87 @@ app.get("/logout", (req, res) => {
 
     });
 
+});
+
+app.post("/forgotpassword", async (req, res) => {
+
+    const email = req.body.email;
+
+    const user = users.find(
+        u => u.email === email
+    );
+
+    if (!user) {
+        return res.send("Пользователь не найден");
+    }
+
+    const token = Date.now().toString();
+
+    user.resetToken = token;
+
+    fs.writeFileSync(
+        "users.json",
+        JSON.stringify(users, null, 4)
+    );
+
+    const resetLink =
+        `https://artist-sketlex.onrender.com/reset-password/${token}`;
+
+await transporter.sendMail({
+
+    from: "artist-sketlex@gmail.com",
+
+    to: email,
+
+    subject: "Восстановление пароля",
+
+    html: `
+        <h2>Восстановление пароля</h2>
+
+        <a href="${resetLink}">
+            Сменить пароль
+        </a>
+    `
+});
+
+    res.send ("Письмо отправлено");
+});
+
+app.get("/resetpassword/:token", (req, res) => {
+
+    res.sendFile(
+        path.join(__dirname, "public", "reserpassword.html")
+    );
+
+});
+
+app.post("/reset-password", async (req, res) => {
+
+    const token =
+    req.body.token;
+    
+    const password =
+    req.body.password;
+
+    const user = users.find(
+        u => u.resetToken === token
+    );
+
+    if (!user) {
+        return res.send("Ссылка недействительна");
+    }
+
+    user.password =
+    await bcrypt.hash(password, 10);
+
+    delete user.resetToken;
+
+    fs.writeFileSync(
+        "users.json",
+        JSON.stringify(users, null, 4)
+    );
+
+    res.send("Пароль успешно изменен");
 });
 
 app.post(
