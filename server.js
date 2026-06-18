@@ -303,6 +303,8 @@ app.post(
     songUpload.single("song"),
     (req, res) => {
 
+        console.log("Файл:", req.file);
+
         res.send("Песня загружена!");
     }
 );
@@ -333,6 +335,23 @@ app.post("/delete-song", (req, res) => {
     });
 });
 
+fetch("/songs")
+.then(res => res.json())
+.then(files => {
+
+    const container =
+        document.getElementById("songs");
+
+    files.forEach(file => {
+
+        container.innerHTML += `
+            <audio controls>
+                <source src="/songs?${file}">
+            </audio>
+            <br>
+        `;
+    });
+});
 app.get("/me", (req, res) => {
 
     if (!req.session.user) {
