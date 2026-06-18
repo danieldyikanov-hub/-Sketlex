@@ -166,32 +166,18 @@ app.post("/forgotpassword", async (req, res) => {
     );
 
     const resetLink =
-        `https://artist-sketlex.onrender.com/reset-password/${token}`;
+        `https://artist-sketlex.onrender.com/resetpassword/${token}`;
 
-console.log("Ссылка восстановления:");
 console.log(resetLink);
 
-res.send(resetLink);
-
-// await transporter.sendMail({
-
-    from: "artist-sketlex@gmail.com",
-
-    to: email,
-
-    subject: "Восстановление пароля",
-
-    html: `
-        <h2>Восстановление пароля</h2>
-
-        <a href="${resetLink}">
-            Сменить пароль
-        </a>
-    `
+res.send(`
+    <h2>Тест восстановления пароля</h2>
+    <a href="${resetLink}">
+        Сменить пароль
+    </a>
+`);
 });
 
-    res.send ("Письмо отправлено");
-});
 
 app.get("/resetpassword/:token", (req, res) => {
 
