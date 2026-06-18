@@ -6,17 +6,17 @@ fetch("/me")
 
     isAdmin = user.role === "admin";
 
+    console.log("Роль:", user.role);
+    console.log("Админ:", isAdmin);
+
     loadGallery();
 
 });
 
-function loadGallery() {
-
-    // весь код галереи здесь
-
-}
-let images = [];
+    let images = [];
 let currentIndex = 0;
+
+function loadGallery() {
 
 fetch("/photos")
 .then(response => response.json())
@@ -26,13 +26,16 @@ fetch("/photos")
 
     files.forEach(file => {
 
+        if(file === ".keep") return;
+
         const img = document.createElement("img");
 
         const imgContainer = document.createElement("div");
 
         const deleteBtn = document.createElement("button");
 
-        deleteBtn.innerText = "🗑";
+        deleteBtn.innerText = "Удалить";
+        deleteBtn.className = "delete-btn";
 
 if (isAdmin) {
 
@@ -94,6 +97,9 @@ gallery.appendChild(imgContainer);
 
     });
 });
+
+
+}
 
 document.getElementById("close").onclick = () => {
 

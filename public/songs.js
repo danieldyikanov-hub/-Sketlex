@@ -4,7 +4,15 @@ fetch("/songs")
 
     const songs = document.getElementById("songs");
 
+    if (songs) {
+
+    fetch("/songs")
+    .then(response => response.json())
+    ,then(files => {
+
     files.forEach(file => {
+
+        if (file === ".keep") return;
 
         const audio =
             document.createElement("audio");
@@ -17,11 +25,11 @@ fetch("/songs")
 
         songs.appendChild(
             document.createElement("br")
-        );
+        });
 
     });
 
-});
+};
 
 const deleteBtn = document.createElement("button");
 
