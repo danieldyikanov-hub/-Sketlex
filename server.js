@@ -335,6 +335,7 @@ app.post("/delete-song", (req, res) => {
         req.session.user.role !== "admin"
     ) {
         return res.status(403).send("Нет доступа");
+    }
 
     const fileName = req.body.file;
 
@@ -352,8 +353,6 @@ app.post("/delete-song", (req, res) => {
 app.use("/songs", express.static(
     path.join(__dirname, "public/songs")
 ));
-
-app.use("/songs", express.static(path.join(__dirname, "public/songs")));
 
 app.get("/testsongs", (req, res) => {
 
