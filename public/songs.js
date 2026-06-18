@@ -1,18 +1,17 @@
-fetch("/songs")
+fetch("/testsongs")
 .then(response => response.json())
 .then(files => {
 
     const songs = document.getElementById("songs");
 
-    if (songs) {
-
-    fetch("/songs")
-    .then(response => response.json())
-    ,then(files => {
+    if (!songs) return;
 
     files.forEach(file => {
 
         if (file === ".keep") return;
+
+        const wrapper =
+            document.createElement("div");
 
         const audio =
             document.createElement("audio");
@@ -21,15 +20,7 @@ fetch("/songs")
 
         audio.src = "/songs/" + file;
 
-        songs.appendChild(audio);
-
-        songs.appendChild(
-            document.createElement("br")
-        });
-
-    });
-
-};
+        wrapper.appendChild(audio);
 
 const deleteBtn = document.createElement("button");
 
@@ -56,3 +47,15 @@ deleteBtn.onclick = () => {
     });
 
 };
+
+wrapper.appendChild(deleteBtn);
+
+songs.appendChild(deleteBtn);
+
+song.appendChild(wrapper);
+
+songs.appendChild(
+    document.createElement("br")
+);
+});
+});
