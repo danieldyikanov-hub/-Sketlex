@@ -290,7 +290,11 @@ const songStorage = multer.diskStorage({
     },
 
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
+        const ext = path.extname(file.originalname);
+
+        cb(
+            null,
+            Date.now() + ext);
     }
 });
 
@@ -343,7 +347,17 @@ app.use("/songs", express.static(
     path.join(__dirname, "public/songs")
 ));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/songs", express.static(path.join(__dirname, "public/songs")));
+
+app.get("/testsongs", (req, res) => {
+
+    const files = fs.readdirSync(
+        path.join(__dirname, "public/songs")
+    );
+
+    res.json(files);
+
+});
 
 app.get("/me", (req, res) => {
 
