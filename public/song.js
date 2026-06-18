@@ -50,9 +50,7 @@ deleteBtn.onclick = () => {
 
 wrapper.appendChild(deleteBtn);
 
-songs.appendChild(deleteBtn);
-
-song.appendChild(wrapper);
+songs.appendChild(wrapper);
 
 songs.appendChild(
     document.createElement("br")

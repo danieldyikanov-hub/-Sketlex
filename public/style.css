@@ -5,6 +5,12 @@ body {
     font-family: Montserrat;
 }
 
+audio {
+    display: block;
+    width: 400px;
+    margin: 20px auto;
+}
+
 #user-panel {
     position: fixed;
     top: 20px;
