@@ -1,14 +1,18 @@
-fetch("/testsongs")
+fetch("/me")
+.then(res => res.json())
+.then(user => {
+
+    const isAdmin = user.role === "admin";
+
+fetch("/songs-list")
 .then(response => response.json())
 .then(files => {
 
     const songs = document.getElementById("songs");
 
-    if (!songs) return;
+    files.forEach(song => {
 
-    files.forEach(file => {
-
-        if (file === ".keep") return;
+        if (song === ".keep") return;
 
         const wrapper =
             document.createElement("div");
@@ -18,14 +22,25 @@ fetch("/testsongs")
 
         audio.controls = true;
 
-        audio.src = "/songs/" + file;
+        audio.src = song.url;
 
         wrapper.appendChild(audio);
+
+        if (isAdmin) {
 
 const deleteBtn = document.createElement("button");
 
 deleteBtn.innerText ="🗑";
 
+    // твой код удаления
+
+    wrapper.appendChild(deleteBtn);
+    }
+
+    songs.appendChild(wrapper);
+    });
+});
+});
 deleteBtn.onclick = () => {
 
     const confirmed = confirm(
@@ -42,8 +57,9 @@ deleteBtn.onclick = () => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            file: file
-        })
+    public_id:
+        song.public_id
+})
     })
     .then(res => res.text())
     .then(msg => {

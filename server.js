@@ -1,5 +1,7 @@
 const multer = require("multer");
 
+const cloudinary = require("cloudinary").v2;
+
 const session = require("express-session");
 
 const fs = require("fs");
@@ -22,6 +24,17 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "-" + file.originalname);
     }
 
+});
+
+cloudinary.config({
+    cloud_name:
+        process.env.CLOUDINARY_CLOUD_NAME,
+
+    api_key:
+        process.env.CLOUDINARY_API_KEY,
+
+    api_secret:
+        process.env.CLOUDINARY_API_SECRET
 });
 
 const transporter = nodemailer.createTransport({
@@ -305,15 +318,62 @@ const songUpload = multer({
 app.post(
     "/upload-song",
     songUpload.single("song"),
-    (req, res) => {
+    async (req, res) => {
 
-        if (!req.file) {
-            return res.send("Файл не выбран");
+        try {
+
+            const result =
+                await cloudinary.uploader.upload(
+                    req.file.path,
+                    {
+                        resource_type: "video",
+                        folder: "songs"
+                    }
+                );
+
+            const songs =
+                JSON.parse(
+                    fs.readFileSync(
+                        "songs.json"
+                    )
+                );
+
+            songs.push({
+                title:
+                    req.file.originalname,
+
+                url:
+                    result.secure_url,
+
+                public_id:
+                    result.public_id
+            });
+
+            fs.writeFileSync(
+                "songs.json",
+                JSON.stringify(
+                    songs,
+                    null,
+                    4
+                )
+            );
+
+            fs.unlinkSync(req.file.path);
+
+            res.send(
+                "Песня загружена"
+            );
+
+        } catch (err) {
+
+            console.log(err);
+
+            res.send(
+                "Ошибка загрузки"
+            );
+
         }
 
-        console.log("Файл:", req.file);
-
-        res.send("Песня загружена!");
     }
 );
 
@@ -328,39 +388,67 @@ app.get("/songs", (req, res) => {
     res.json(files);
 
 });
-app.post("/delete-song", (req, res) => {
+app.post("/delete-song", async (req, res) => {
 
     if (
         !req.session.user ||
         req.session.user.role !== "admin"
     ) {
-        return res.status(403).send("Нет доступа");
+        return res.status(403)
+            .send("Нет доступа");
     }
 
-    const fileName = req.body.file;
+    const publicId =
+        req.body.public_id;
 
-    const filePath = path.join(__dirname, "public/songs", fileName);
-
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            return res.send("Ошибка удаления");
+    await cloudinary.uploader.destroy(
+        publicId,
+        {
+            resource_type: "video"
         }
+    );
 
-        res.send("Песня удалена");
-    });
+    const songs =
+        JSON.parse(
+            fs.readFileSync(
+                "songs.json"
+            )
+        );
+
+    const updated =
+        songs.filter(
+            s =>
+            s.public_id !== publicId
+        );
+
+    fs.writeFileSync(
+        "songs.json",
+        JSON.stringify(
+            updated,
+            null,
+            4
+        )
+    );
+
+    res.send(
+        "Песня удалена"
+    );
+
 });
-
 app.use("/songs", express.static(
     path.join(__dirname, "public/songs")
 ));
 
-app.get("/testsongs", (req, res) => {
+app.get("/songs-list", (req, res) => {
 
-    const files = fs.readdirSync(
-        path.join(__dirname, "public/songs")
-    );
+    const songs =
+        JSON.parse(
+            fs.readFileSync(
+                "songs.json"
+            )
+        );
 
-    res.json(files);
+    res.json(songs);
 
 });
 
