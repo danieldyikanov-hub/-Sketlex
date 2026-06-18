@@ -366,6 +366,7 @@ app.post(
 
         } catch (err) {
 
+            console.log("Cloudinary error:");
             console.log(err);
 
             res.send(
