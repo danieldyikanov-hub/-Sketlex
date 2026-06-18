@@ -335,23 +335,12 @@ app.post("/delete-song", (req, res) => {
     });
 });
 
-fetch("/songs")
-.then(res => res.json())
-.then(files => {
+app.use("/songs", express.static(
+    path.join(__dirname, "public/songs")
+));
 
-    const container =
-        document.getElementById("songs");
+app.use(express.static(path.join(__dirname, "public")));
 
-    files.forEach(file => {
-
-        container.innerHTML += `
-            <audio controls>
-                <source src="/songs?${file}">
-            </audio>
-            <br>
-        `;
-    });
-});
 app.get("/me", (req, res) => {
 
     if (!req.session.user) {
