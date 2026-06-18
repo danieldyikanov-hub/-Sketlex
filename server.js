@@ -25,11 +25,23 @@ const storage = multer.diskStorage({
 });
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
         user: "victorsketlex@gmail.com",
         pass: "phhk enzp weje dpot"
     }
+});
+
+transporter.verify((error, success) => {
+
+    if (error) {
+        console.log(error);
+    } else {
+        console.log("SMTP готов");
+    }
+
 });
 
 const upload = multer({ storage });
@@ -134,55 +146,48 @@ app.get("/logout", (req, res) => {
 
 app.post("/forgotpassword", async (req, res) => {
 
-    try {
+    const email = req.body.email;
 
-        const email = req.body.email;
+    const user = users.find(
+        u => u.email === email
+    );
 
-        const user = users.find(
-            u => u.email === email
-        );
+    if (!user) {
+        return res.send("Пользователь не найден");
+    }
 
-        if (!user) {
-            return res.send("Пользователь не найден");
-        }
+    const token = Date.now().toString();
 
-        const token = Date.now().toString();
+    user.resetToken = token;
 
-        user.resetToken = token;
+    fs.writeFileSync(
+        "users.json",
+        JSON.stringify(users, null, 4)
+    );
 
-        fs.writeFileSync(
-            "users.json",
-            JSON.stringify(users, null, 4)
-        );
-
-        const resetLink =
+    const resetLink =
         `https://artist-sketlex.onrender.com/reset-password/${token}`;
 
-        await transporter.sendMail({
+await transporter.sendMail({
 
-            from: "victorsketlex@gmail.com",
+    from: "artist-sketlex@gmail.com",
 
-            to: email,
+    to: email,
 
-            subject: "Восстановление пароля",
+    subject: "Восстановление пароля",
 
-            html: `
-                <h2>Восстановление пароля</h2>
-                <a href="${resetLink}">
-                    Сменить пароль
-                </a>
-            `
-        });
+    html: `
+        <h2>Восстановление пароля</h2>
 
-        res.send("Письмо отправлено");
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).send("Ошибка отправки письма");
-    }
+        <a href="${resetLink}">
+            Сменить пароль
+        </a>
+    `
 });
+
+    res.send ("Письмо отправлено");
+});
+
 app.get("/resetpassword/:token", (req, res) => {
 
     res.sendFile(
