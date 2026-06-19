@@ -325,8 +325,10 @@ app.post(
     await cloudinary.uploader.upload(
         req.file.path,
         {
-            resource_type: "auto",
+            resource_type: "video",
             folder: "songs"
+            use_filename: true,
+            unique_filename: false
         }
     );
             fs.unlinkSync(req.file.path);
@@ -363,7 +365,7 @@ app.post("/delete-song", async (req, res) => {
     await cloudinary.uploader.destroy(
         req.body.public_id,
         {
-            resource_type: "auto"
+            resource_type: "video"
         }
     );
 
@@ -373,7 +375,16 @@ app.post("/delete-song", async (req, res) => {
     } catch(err) {
 
         console.log(err);
+        console.log("Удаляем", req.body.public_id);
 
+        const result = await cloudinary.uploader.destroy(
+            req.body.public_id,
+            {
+                resource_type: "video" 
+            }
+    );
+
+    console.log(result);
         res.send("Ошибка удаления");
     
     }    
