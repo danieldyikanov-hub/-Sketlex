@@ -327,7 +327,7 @@ app.post(
         {
             resource_type: "video",
             folder: "songs"
-            use_filename: true,
+            user_filename: true,
             unique_filename: false
         }
     );
