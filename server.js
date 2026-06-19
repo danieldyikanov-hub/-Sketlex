@@ -322,7 +322,6 @@ app.post(
 
         try {
 
-            const result =
     await cloudinary.uploader.upload(
         req.file.path,
         {
@@ -330,34 +329,6 @@ app.post(
             folder: "songs"
         }
     );
-
-            const songs =
-                JSON.parse(
-                    fs.readFileSync(
-                        "songs.json"
-                    )
-                );
-
-            songs.push({
-                title:
-                    req.file.originalname,
-
-                url:
-                    result.secure_url,
-
-                public_id:
-                    result.public_id
-            });
-
-            fs.writeFileSync(
-                "songs.json",
-                JSON.stringify(
-                    songs,
-                    null,
-                    4
-                )
-            );
-
             fs.unlinkSync(req.file.path);
 
             res.send(
@@ -366,11 +337,10 @@ app.post(
 
         } catch (err) {
 
-            console.log("Cloudinary error:");
             console.log(err);
 
             res.send(
-                err.message
+               "Ошибка загрузки"
             );
 
         }
@@ -378,17 +348,6 @@ app.post(
     }
 );
 
-app.get("/songs", (req, res) => {
-
-    if (!fs.existsSync("public/songs")) {
-        return res.json([]);
-    }
-
-    const files = fs.readdirSync("public/songs");
-
-    res.json(files);
-
-});
 app.post("/delete-song", async (req, res) => {
 
     if (
@@ -399,57 +358,63 @@ app.post("/delete-song", async (req, res) => {
             .send("Нет доступа");
     }
 
-    const publicId =
-        req.body.public_id;
+    try {
 
     await cloudinary.uploader.destroy(
-        publicId,
+        req.body.public_id,
         {
-            resource_type: "video"
+            resource_type: "auto"
         }
     );
 
-    const songs =
-        JSON.parse(
-            fs.readFileSync(
-                "songs.json"
-            )
-        );
-
-    const updated =
-        songs.filter(
-            s =>
-            s.public_id !== publicId
-        );
-
-    fs.writeFileSync(
-        "songs.json",
-        JSON.stringify(
-            updated,
-            null,
-            4
-        )
-    );
-
-    res.send(
+       res.send(
         "Песня удалена"
     );
+    } catch(err) {
+
+        console.log(err);
+
+        res.send("Ошибка удаления");
+    
+    }    
 
 });
-app.use("/songs", express.static(
-    path.join(__dirname, "public/songs")
-));
 
-app.get("/songs-list", (req, res) => {
+app.get("/songs-list", async (req, res) => {
+
+    try {
+
+        const result =
+            await cloudinary.search
+            .expression("folder:songs")
+            .sort_by("created_at", "desc")
+            .max_results(100)
+            .execute();
 
     const songs =
-        JSON.parse(
-            fs.readFileSync(
-                "songs.json"
-            )
+        result.resources.map(song => ({
+
+            title:
+                song.filename,
+
+            url:
+                song.secure_url,
+
+            public_id:
+                song.public_id
+
+            })
         );
 
     res.json(songs);
+
+} catch (err) {
+
+    console.log(err);
+
+    res.status(500).json([]);
+    
+    }
 
 });
 
