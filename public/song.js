@@ -12,8 +12,6 @@ fetch("/songs-list")
 
     files.forEach(song => {
 
-        if (song === ".keep") return;
-
         const wrapper =
             document.createElement("div");
 
@@ -32,24 +30,14 @@ const deleteBtn = document.createElement("button");
 
 deleteBtn.innerText ="🗑";
 
-    // твой код удаления
-
-    wrapper.appendChild(deleteBtn);
-    }
-
-    songs.appendChild(wrapper);
-    });
-});
-});
 deleteBtn.onclick = () => {
 
     const confirmed = confirm(
         "Вы уверены, что хотите удалить эту песню?"
     );
 
-    if (!confirmed) {
+    if (!confirmed)
         return;
-    }
 
     fetch("/delete-song", {
         method: "POST",
@@ -73,11 +61,13 @@ deleteBtn.onclick = () => {
 };
 
 wrapper.appendChild(deleteBtn);
+}
 
 songs.appendChild(wrapper);
 
 songs.appendChild(
     document.createElement("br")
 );
+});
 });
 });
