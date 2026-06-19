@@ -323,13 +323,13 @@ app.post(
         try {
 
             const result =
-                await cloudinary.uploader.upload(
-                    req.file.path,
-                    {
-                        resource_type: "video",
-                        folder: "songs"
-                    }
-                );
+    await cloudinary.uploader.upload(
+        req.file.path,
+        {
+            resource_type: "auto",
+            folder: "songs"
+        }
+    );
 
             const songs =
                 JSON.parse(
@@ -370,7 +370,7 @@ app.post(
             console.log(err);
 
             res.send(
-                "Ошибка загрузки"
+                err.message
             );
 
         }
